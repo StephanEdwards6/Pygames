@@ -8,6 +8,8 @@ import random
 
 pygame.init()
 
+SQUARE_SIZES = 50
+
 # Dimensiones de la ventana
 ANCHO, ALTO = 800, 800
 
@@ -25,7 +27,7 @@ class Jugador:
         self.x = x
         self.y = y
         self.color = color
-        self.velocidad = 5
+        self.velocidad = 0.5
     
     # Acciones que realiza el jugador - Polimorfismo : tener la misma palabra para realizar acciones diferentes
     def mover(self, direccion):
@@ -40,19 +42,19 @@ class Jugador:
         
         if self.x < 0:
             self.x = 0
-        elif self.x > ANCHO - 50:
-            self.x = ANCHO - 50
+        elif self.x > ANCHO - SQUARE_SIZES:
+            self.x = ANCHO - SQUARE_SIZES
 
         if self.y < 0:
             self.y = 0
-        elif self.y > ALTO - 50:
-            self.y = ALTO - 50
+        elif self.y > ALTO - SQUARE_SIZES:
+            self.y = ALTO - SQUARE_SIZES
         
     def dibujar (self,pantalla):
             
             # Draw.rect es para dinujar un rectangulo en la pantalla
             
-        pygame.draw.rect(pantalla, self.color, (self.x, self.y, 50,50) )
+        pygame.draw.rect(pantalla, self.color, (self.x, self.y, SQUARE_SIZES,SQUARE_SIZES) )
 
 # Clase Enemigo
 class Enemigo:
@@ -61,15 +63,21 @@ class Enemigo:
             self.x = x
             self.y = y
             self.color = color
-            self.velocidad = 5
+            self.velocidad = 1
     # Movimiento
     def mover(self):
-        self.x += random.choice([-self.velocidad, self.velocidad])
-        self.y += random.choice([-self.velocidad, self.velocidad])
+        next_x = self.x + random.choice([-self.velocidad, self.velocidad])
+        next_y = self.y + random.choice([-self.velocidad, self.velocidad])
+
+        if next_x < 0 or next_x > ANCHO - SQUARE_SIZES or next_y < 0 or next_y > ALTO - SQUARE_SIZES:
+            self.mover()
+        else:
+            self.x = next_x
+            self.y = next_y
 
         # Limitar movimiento
     def dibujar(self, pantalla):
-        pygame.draw.rect(pantalla, self.color, (self.x, self.y, 50, 50))
+        pygame.draw.rect(pantalla, self.color, (self.x, self.y, SQUARE_SIZES, SQUARE_SIZES))
 
 # Crear o instanciar objetos
 jugador = Jugador(375, 275, (255,0,0)) # Jugador rojo en el centro
@@ -100,7 +108,7 @@ while corriendo:
     enemigo.mover()
 
     # Colision
-    if (jugador.x < enemigo.x + 50 and jugador.x > enemigo.x and jugador.y < enemigo.y + 50 and jugador.y + 50 > enemigo.y):
+    if (jugador.x < enemigo.x + SQUARE_SIZES and jugador.x > enemigo.x and jugador.y < enemigo.y + SQUARE_SIZES and jugador.y + SQUARE_SIZES > enemigo.y):
         print('Colision!!')
         corriendo = False
     
